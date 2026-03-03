@@ -43,6 +43,62 @@ app.get('/health', (c) => {
   });
 });
 
+// Agent manifest for xgate.run discovery
+app.get('/.well-known/agent.json', (c) => {
+  const baseUrl = new URL(c.req.url).origin;
+  return c.json({
+    name: 'Bounty Price Suggester',
+    version: '1.0.0',
+    description: 'AI-powered pricing suggestions for TaskMarket bounties. Analyzes task complexity and market rates to recommend optimal USDC rewards.',
+    url: baseUrl,
+    payment: {
+      network: NETWORK,
+      address: PAYMENT_ADDRESS,
+      facilitator: FACILITATOR_URL,
+    },
+    endpoints: [
+      {
+        method: 'POST',
+        path: '/v1/suggest',
+        description: 'Get optimal bounty price suggestions for a task description',
+        price: '$0.002',
+        input: { description: 'string' },
+        output: {
+          suggested: { low: 'number', mid: 'number', high: 'number', recommended: 'number' },
+          reasoning: 'string',
+          comparables: 'array',
+          complexity: { score: 'number', factors: 'array' },
+          confidence: 'number',
+          freshness: 'string',
+        },
+      },
+      {
+        method: 'GET',
+        path: '/v1/market/stats',
+        description: 'Get current TaskMarket pricing statistics',
+        price: '$0.001',
+        output: {
+          totalTasks: 'number',
+          completedTasks: 'number',
+          averageReward: 'number',
+          medianReward: 'number',
+          rewardRange: { min: 'number', max: 'number' },
+          cachedAt: 'string',
+        },
+      },
+      {
+        method: 'GET',
+        path: '/health',
+        description: 'Health check',
+        price: 'free',
+      },
+    ],
+    tags: ['pricing', 'taskmarket', 'bounty', 'ai', 'x402'],
+    author: 'Catorpilor',
+    repository: 'https://github.com/Catorpilor/bounty-suggester',
+  });
+});
+
 // Landing page
 app.get('/', (c) => {
   return c.html(`
