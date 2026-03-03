@@ -45,12 +45,11 @@ app.get('/health', (c) => {
 
 // Agent manifest for xgate.run discovery
 app.get('/.well-known/agent.json', (c) => {
-  const baseUrl = new URL(c.req.url).origin;
   return c.json({
     name: 'Bounty Price Suggester',
     version: '1.0.0',
     description: 'AI-powered pricing suggestions for TaskMarket bounties. Analyzes task complexity and market rates to recommend optimal USDC rewards.',
-    url: baseUrl,
+    url: BASE_URL,
     payment: {
       network: NETWORK,
       address: PAYMENT_ADDRESS,
@@ -100,6 +99,8 @@ app.get('/.well-known/agent.json', (c) => {
 });
 
 // Landing page
+const BASE_URL = process.env.BASE_URL || 'https://demos.zeh.app/bounty-suggester';
+
 app.get('/', (c) => {
   return c.html(`
 <!DOCTYPE html>
@@ -125,7 +126,7 @@ app.get('/', (c) => {
     <h3>POST /v1/suggest</h3>
     <p>Get optimal bounty price suggestions for a task description.</p>
     <p>Price: <span class="price">$0.002 USDC</span> per call</p>
-    <pre><code>curl -X POST ${new URL(c.req.url).origin}/v1/suggest \\
+    <pre><code>curl -X POST ${BASE_URL}/v1/suggest \\
   -H "Content-Type: application/json" \\
   -d '{"description": "Build a REST API with TypeScript"}'</code></pre>
   </div>
@@ -134,7 +135,7 @@ app.get('/', (c) => {
     <h3>GET /v1/market/stats</h3>
     <p>Get current market pricing statistics.</p>
     <p>Price: <span class="price">$0.001 USDC</span> per call</p>
-    <pre><code>curl ${new URL(c.req.url).origin}/v1/market/stats</code></pre>
+    <pre><code>curl ${BASE_URL}/v1/market/stats</code></pre>
   </div>
   
   <div class="endpoint">
