@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  bounty-suggester:
+    build: .
+    ports:
+      - "3403:3403"
+    environment:
+      - PORT=3403
+      - PAYMENT_ADDRESS=${PAYMENT_ADDRESS}
+      - FACILITATOR_URL=${FACILITATOR_URL:-https://facilitator.payai.network}
+      - NETWORK=${NETWORK:-eip155:8453}
+      - TASKMARKET_API_URL=${TASKMARKET_API_URL:-https://api-market.daydreams.systems/api/tasks}
+    restart: unless-stopped
